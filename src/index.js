@@ -4,12 +4,6 @@ import { Provider } from 'react-redux'
 import App from './containers/App'
 import configureStore from './store/configureStore'
 
-
-// render(<App />, document.getElementById('root'))
-
-// if you have already set actions, reducers and store, then
-//
-
 const initialState = {
   number: [0],
 };
