@@ -17,7 +17,7 @@ class App extends Component {
       starty: 0,
       posx: 0,
       posy: 0,
-      drag: true,
+      dragging: false,
     };
     this.handleFileUpload = this.handleFileUpload.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
@@ -35,8 +35,11 @@ class App extends Component {
     reader.readAsDataURL(file);
   }
 
-  handleDragStart(e) {
-    const target = e.target;
+  handleMouseDown(e) {
+     console.log('handleDragStart'+this.state.dragging);
+    this.state.dragging = true;
+    this.setState(this.state);
+    let target = e.target;
     if (!target.style.top) target.style.top = '0px';
     if (!target.style.left) target.style.left = '0px';
 
@@ -48,19 +51,23 @@ class App extends Component {
     this.state.posx = parseInt(target.style.left);
     this.state.posy = parseInt(target.style.top);
 
-    this.state.drag = true;
   }
-
   handleOnDrag(e) {
-    const target = e.target;
-
-    target.style.left = `${this.state.posx + e.clientX - this.state.startx}px`;
-    target.style.top = `${this.state.posy + e.clientY - this.state.starty}px`;
-    return false;
+    
+    if (this.state.dragging) {
+      console.log('handleOnDrag '+this.state.dragging);
+      if (e.clientX===0 && e.clientY ===0) return false;
+      let target = e.target;
+      target.style.left = `${this.state.posx + e.clientX - this.state.startx}px`;
+      target.style.top = `${this.state.posy + e.clientY - this.state.starty}px`;  
+      this.setState(this.state);
+    }
   }
 
-  handleDragEnd() {
-    this.state.drag = false;
+  handleMouseUp(e) {
+    this.state.dragging = false;
+    this.setState(this.state);
+    console.log('handleMouseUp '+this.state.dragging);
   }
 
   render() {
@@ -70,12 +77,13 @@ class App extends Component {
         <div className={ style.photoContainer }>
           <div className={ style.photoBox } >
             <img
+              draggable="true"
               alt="dragpic"
               className={ style.photo }
               id="photo"
-              onDragStart={ this.handleDragStart }
+              onMouseDown={ this.handleMouseDown.bind(this) }
               onDrag={ this.handleOnDrag }
-              onDragEnd={ this.handleDragEnd }
+              onMouseUp={ this.handleMouseUp.bind(this) }
             />
           </div>
         </div>
